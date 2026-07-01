@@ -1,17 +1,18 @@
-🚀 Decision Evaluation System for New Retail Industry Based on BERT+PET
+# 🚀 Decision Evaluation System for New Retail Industry Based on BERT+PET
 
 (BERT-PET based New Retail Decision Evaluation System)
 
-📖 Project Introduction
+## 📖 Project Introduction
 With the rapid development of technology and the ubiquity of smart devices, AI technology has been widely applied in the new retail industry. This project aims to build a deep learning-based e-commerce review text classification system.
 In intelligent recommendation systems, user text reviews contain rich semantic information (such as preferences and product features). Compared to explicit ratings, text information can effectively compensate for rating sparsity and enhance the explainability of recommendations. This project utilizes the BERT + PET (Pattern-Exploiting Training) method to accurately classify e-commerce platform user reviews, helping platforms respond to user needs quickly, improve products and services, and lay the foundation for personalized recommendations.
-💡 Core Technology: BERT + PET
+## 💡 Core Technology: BERT + PET
 This project adopts the PET (Pattern-Exploiting Training) paradigm. Its core idea is to transform traditional classification tasks into Cloze tasks, which pre-trained models (MLM) excel at.
 Template Construction: Artificially define templates based on prior knowledge to wrap the input text. For example: This is a {MASK} review: {textA}.
 Verbalizer: Establish a mapping relationship between real labels and predicted words (Label Words). For example, mapping the label "Sports" to a word like "Football" which is easier for the model to predict.
 Fine-tuning: Fine-tune the MLM task parameters to make the model perform better on specific classification tasks, which is especially suitable for few-shot scenarios or situations requiring high semantic understanding.
-🛠️ Environment Preparation
+### 🛠️ Environment Preparation
 This project is implemented based on PyTorch and HuggingFace Transformers. Please ensure the following dependencies are installed before running:
+```
 pip install torch
 pip install transformers==4.22.1
 pip install datasets==2.4.0
@@ -20,7 +21,9 @@ pip install matplotlib==3.6.0
 pip install rich==12.5.1
 pip install scikit-learn==1.1.2
 pip install requests==2.28.1
-📂 Project Architecture and Directory Description
+```
+## 📂 Project Architecture and Directory Description
+```
 /
 ├── bert-base-chinese/      # Pre-trained model files (BERT-base-chinese)
 ├── checkpoints/            # Model storage location (model_400, model_best, etc.)
@@ -41,50 +44,60 @@ pip install requests==2.28.1
 ├── train.py                # Model training and validation entry point
 ├── inference.py            # Model inference entry point
 └── nohup.out               # Training log file
-🔍 Key Module Analysis
-Data Processing (data_handle)
+```
+## 🔍 Key Module Analysis
+### Data Processing (data_handle)
 Template Construction: template.py is responsible for parsing custom parameters in prompt.txt (such as {textA}, {MASK}) and concatenating the processed text into a tensor format acceptable by the model.
 Data Loader: data_loader.py implements an efficient data iterator, automatically completing the conversion from raw text to Token IDs and loading data by Batch.
-Label Mapping Strategy (utils/verbalizer.py)
+### Label Mapping Strategy (utils/verbalizer.py)
 During the inference phase, the predicted words output by the model may not exactly match the defined labels. This project implements a fallback strategy based on Longest Common Substring fuzzy matching:
-Logic: Calculate the similarity between the model's predicted words and the sub-labels in the label dictionary.
-Optimization Suggestion: Although string matching is intuitive, it may present performance bottlenecks with large data volumes. For industrial deployment, it is recommended to switch to direct matching based on Token IDs, using integer comparison instead of dynamic programming algorithms to significantly improve inference speed and align with the model's vocabulary space.
-Model Evaluation (utils/metric_utils.py)
+Logic: 
+  Calculate the similarity between the model's predicted words and the sub-labels in the label dictionary.
+Optimization Suggestion: 
+  Although string matching is intuitive, it may present performance bottlenecks with large data volumes. For industrial deployment, it is recommended to switch to direct matching based on Token IDs, using integer comparison instead of dynamic programming algorithms to significantly improve inference speed and align with the model's vocabulary space.
+### Model Evaluation (utils/metric_utils.py)
 Implements a standard classification evaluator ClassEvaluator:
-Streaming Evaluation: Supports accumulating prediction results in batches, eliminating the need to load all test data at once.
-Multi-dimensional Metrics: Calculates not only global Accuracy and Weighted F1 but also outputs Precision, Recall, and F1 for each category, facilitating the analysis of model performance shortcomings in specific categories (e.g., "Clothing", "Fruit").
-🚀 Quick Start
-Dataset Preparation
+Streaming Evaluation: 
+  Supports accumulating prediction results in batches, eliminating the need to load all test data at once.
+Multi-dimensional Metrics: 
+  alculates not only global Accuracy and Weighted F1 but also outputs Precision, Recall, and F1 for each category, facilitating the analysis of model performance shortcomings in specific categories (e.g., "Clothing", "Fruit").
+## 🚀 Quick Start
+### Dataset Preparation
 Prepare data in the data/ directory.
 train.txt / dev.txt: Each line is separated by \t, with the first part being the label and the second part being the review text.
 Fruit   Crispy, sweet taste is okay, but maybe it's been a while, not very juicy.
 Tablet  Huawei devices are definitely good, but I encountered the worst service on JD.com for the first time...
 prompt.txt: Define the template, e.g., This is a {MASK} review: {textA}.
-Project Configuration
+### Project Configuration
 Modify pet_config.py to set model paths, data paths, Batch Size, Learning Rate, and other hyperparameters.
 Train Model
 Run the training script:
+```
 python train.py
-
+```
 During training, Loss changes will be output, and Precision, Recall, and F1 will be evaluated on the validation set.
-Model Inference
+### Model Inference
 Use the trained model for prediction:
+```
 python inference.py
-
-📊 Expected Results
+```
+### 📊 Expected Results
 With the introduction of the PET method, the model can understand the review context more accurately.
 Example Input: "China upset South Korea 2-1 in a shock win"
 Model Prediction: The [MASK] position predicts a word related to "Sports", and it is finally classified as Sports news.
-📝 Future Optimization Directions
+### 📝 Future Optimization Directions
 Data Augmentation: Increase specific sample data for training categories with low F1 scores (such as certain long-tail product reviews).
 Hard Template Search: Try different Prompt templates to find the expression that works best for the current dataset.
 Engineering Deployment: Optimize the string matching part of inference into Tensor operations to improve online service response speed.
-🔗 Reference
-Pre-trained model (bert-base-chinese), download address: The file is shared via Baidu Netdisk. Link: https://pan.baidu.com/s/1UnHXBJUpib1m7-LIE4oNjA?pwd=cywd, Access Code: cywd
-
-For a detailed step-by-step guide on this project, please refer to the original blog post:
+### 🔗 Reference
+Pre-trained model (bert-base-chinese), download address: The file is shared via Baidu Netdisk. Link: ```
+```
+https://pan.baidu.com/s/1UnHXBJUpib1m7-LIE4oNjA?pwd=cywd, Access Code: cywd
+```
+#### For a detailed step-by-step guide on this project, please refer to the original blog post:
+```
 https://blog.csdn.net/zhoupenghui168/article/details/162371694
-
+```
 
 基于 BERT+PET 的新零售行业决策评价系统
 📖 项目简介
